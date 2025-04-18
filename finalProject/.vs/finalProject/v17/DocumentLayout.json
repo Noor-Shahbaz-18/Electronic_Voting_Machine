@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\AA\\Documents\\Electronic_Voting_Machine\\finalProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E9D17E2D-213D-4DFB-B0D6-0858D9898302}|finalProject.vcxproj|C:\\Users\\AA\\Documents\\Electronic_Voting_Machine\\finalProject\\EVM.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9D17E2D-213D-4DFB-B0D6-0858D9898302}|finalProject.vcxproj|solutionrelative:EVM.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EVM.cpp",
+              "DocumentMoniker": "C:\\Users\\AA\\Documents\\Electronic_Voting_Machine\\finalProject\\EVM.cpp",
+              "RelativeDocumentMoniker": "EVM.cpp",
+              "ToolTip": "C:\\Users\\AA\\Documents\\Electronic_Voting_Machine\\finalProject\\EVM.cpp",
+              "RelativeToolTip": "EVM.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-17T08:49:38.894Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
