@@ -1,0 +1,3 @@
+﻿  EVM.cpp
+MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+C:\Users\3 Stars Laptop\Desktop\Electronic_Voting_Machine\EVM\x64\Debug\EVM.exe : fatal error LNK1120: 1 unresolved externals
