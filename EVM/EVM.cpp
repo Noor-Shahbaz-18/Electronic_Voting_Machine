@@ -10,11 +10,10 @@ protected:
     string username;
     string password;
 public:
-    User(string u, string p) : username(u), password(p) {} // constructor initializor list
+    User(string u, string p) : username(u), password(p) {} // constructor initializer list
      bool login(const string& user, const string& pass) {  // function to check whether correct(pass or user)
         return username == user && password == pass;
-    }
-
+     }
     virtual void showMenu() = 0; // pure virtual function
 };
 class Admin : public User {
@@ -48,8 +47,12 @@ public:
 };
 class Voter : public User {
     int voterId;
+    string unionCouncilCode;
 public:
-    Voter(string u, string p, int id) : User(u, p), voterId(id) {}
+    Voter(string u, string p, int id, string code) : User(u, p), voterId(id), unionCouncilCode(code) {}
+    string getUnionCouncilCode() { 
+        return unionCouncilCode; 
+    }
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
         cout << "1. View Elections" << endl;
@@ -79,7 +82,8 @@ public:
             getline(ss, username, ',');
             getline(ss, password, ',');
             ss >> id;
-            voters[numVoters++] = Voter(username, password, id);
+            getline(ss, code, ',');
+            voters[numVoters++] = Voter(username, password, id, code);
         }
         file.close();
     }
