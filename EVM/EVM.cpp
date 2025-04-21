@@ -124,10 +124,6 @@ public:
         return Candidate(name, party);
     }
 };
-#include<iostream>
-#include<string>
-#include <fstream>
-using namespace std;
 // ---------- Base Election Class ----------
 class Election {
 protected:
