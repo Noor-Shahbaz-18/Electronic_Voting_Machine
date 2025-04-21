@@ -10,21 +10,26 @@ protected:
     string username;
     string password;
 public:
-    User(string u, string p) : username(u), password(p) {} // constructor initializer list
+    User(string u, string p) : username(u), password(p) {} // constructor initializor list
      bool login(const string& user, const string& pass) {  // function to check whether correct(pass or user)
         return username == user && password == pass;
-     }
+    }
+
     virtual void showMenu() = 0; // pure virtual function
 };
 class Admin : public User {
 public:
     Admin(string u, string p) : User(u, p) {}
-    void showMenu() {
-        cout << "Welcome Admin: " << username << endl;
-        cout << "1. Create Election" << endl;
-        cout << "2. View Results" << endl;
-        cout << "3. End Election" << endl;
+    void displayMenu()
+    {
+        cout << "\nAdmin Menu:\n";
+        cout << "1. Create Election\n";
+        cout << "2. Add Candidate\n";
+        cout << "3. View Results\n";
+        cout << "4. Logout\n";
+        cout << "Enter choice: ";
     }
+
     void createElection() {
         cout << "Creating Election..." << endl;
     }
@@ -47,12 +52,8 @@ public:
 };
 class Voter : public User {
     int voterId;
-    string unionCouncilCode;
 public:
-    Voter(string u, string p, int id, string code) : User(u, p), voterId(id), unionCouncilCode(code) {}
-    string getUnionCouncilCode() { 
-        return unionCouncilCode; 
-    }
+    Voter(string u, string p, int id) : User(u, p), voterId(id) {}
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
         cout << "1. View Elections" << endl;
@@ -82,8 +83,7 @@ public:
             getline(ss, username, ',');
             getline(ss, password, ',');
             ss >> id;
-            getline(ss, code, ',');
-            voters[numVoters++] = Voter(username, password, id, code);
+            voters[numVoters++] = Voter(username, password, id);
         }
         file.close();
     }
@@ -171,29 +171,27 @@ public:
         file.close();
         cout << " Voter data loaded successfully.\n";
     }
+    void showCandidates() {
+        cout << "\n------------ Candidates ------------\n";
+        for (int i = 0; i < candidateCount; i++) {
+            cout << "ID: " << candidates[i].getId()
+                << " | Name: " << candidates[i].getName() << endl;
+        }
+    }
 
-
-    void secureVote(string cnic, string postalCode, int candidateId)
-    {
+    void secureVote(string cnic, string postalCode, int candidateId) {
         bool voterFound = false;
-
-        for (int i = 0; i < voterCount; i++)
-        {
-            if (voters[i].cnic == cnic && voters[i].postalCode == postalCode)
-            {
+        for (int i = 0; i < voterCount; i++) {
+            if (voters[i].cnic == cnic && voters[i].postalCode == postalCode) {
                 voterFound = true;
 
-                if (voters[i].hasVoted)
-                {
+                if (voters[i].hasVoted) {
                     cout << "\n You have already voted!" << endl;
                     return;
                 }
-
                 bool candidateFound = false;
-                for (int j = 0; j < candidateCount; j++)
-                {
-                    if (candidates[j].getId() == candidateId)
-                    {
+                for (int j = 0; j < candidateCount; j++) {
+                    if (candidates[j].getId() == candidateId) {
                         candidates[j].addVote();
                         voters[i].hasVoted = true;
                         cout << "\n Vote cast for " << candidates[j].getName() << "!\n";
@@ -202,9 +200,8 @@ public:
                     }
                 }
 
-                if (!candidateFound)
-                {
-                    cout << "\n Invalid Candidate ID!\n";
+                if (!candidateFound) {
+                    cout << "\nInvalid Candidate ID!\n";
                 }
 
                 return;
@@ -214,14 +211,15 @@ public:
             cout << "\n CNIC or Postal Code did not match our records!\n";
         }
     }
-    void showResults()
-    {
+
+    void showResults() {
         cout << "\n------------ Election Results: " << title << " ------------\n";
         for (int i = 0; i < candidateCount; i++) {
             cout << setw(20) << left << candidates[i].getName()
                 << " | Votes: " << candidates[i].votes << endl;
         }
     }
+
     void showWinner() {
         int maxVotes = -1;
         string winner = "None";
@@ -233,7 +231,10 @@ public:
         }
         cout << "\n Winner: " << winner << " with " << maxVotes << " votes!" << endl;
     }
-
 };
+
+
+
+
 
 
