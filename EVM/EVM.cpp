@@ -13,9 +13,9 @@ public:
     User(string u, string p) : username(u), password(p) {} // constructor initializor list
     bool login(const string& user, const string& pass) {  // function to check whether correct(pass or user)
         return username == user && password == pass;
-    }
+     }
 
-    virtual void showMenu() = 0; // pure virtual function
+    virtual void showMenu() = 0; 
 };
 class Voter : public User {
     int voterId;
@@ -26,7 +26,8 @@ public:
         cout << "1. View Elections" << endl;
         cout << "2. Cast Vote" << endl;
     }
-    int getId() {
+    int getId() const
+    {
         return voterId;
     }
     void viewElections() {
@@ -55,7 +56,8 @@ public:
         file.close();
     }
 };
-class Candidate {
+class Candidate 
+{
 private:
     string name;
     string party;
@@ -63,10 +65,12 @@ private:
 
 public:
     Candidate(string n, string p) : name(n), party(p), votes(0) {}
-    void incrementVotes() {
+    void incrementVotes() 
+    {
         votes++;
     }
-    void displayInfo() const {
+    void displayInfo() const
+    {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
     string getName() const {
@@ -78,7 +82,8 @@ public:
     int getVotes() const {
         return votes;
     }
-    void saveToFile(ofstream& file) {
+    void saveToFile(ofstream& file) const
+    {
         file << name << "," << party << "," << votes << endl;
     }
     static Candidate loadFromFile(const string& data) {
@@ -88,7 +93,42 @@ public:
         getline(ss, name, ',');
         getline(ss, party, ',');
         ss >> votes;
-        return Candidate(name, party);
+        Candidate* c = new Candidate(name, party);
+        c->votes = votes;
+        return c;
+    }
+};
+class Election {
+public:
+    Candidate* candidates[MAX_CANDIDATES];
+    int candidateCount;
+
+    Election() : candidateCount(0) {}
+
+    void displayCandidates() const
+    {
+        cout << "\nCandidates:\n";
+        for (int i = 0; i < candidateCount; i++) 
+        {
+            candidates[i]->displayInfo();
+        }
+    }
+
+    void showResults() const 
+    {
+        cout << "\nElection Results:\n";
+        for (int i = 0; i < candidateCount; i++)
+        {
+            candidates[i]->displayInfo();
+        }
+    }
+
+    ~Election() 
+    {
+        for (int i = 0; i < candidateCount; i++)
+        {
+            delete candidates[i];
+        }
     }
 };
 // ---------- Base Election Class ----------
