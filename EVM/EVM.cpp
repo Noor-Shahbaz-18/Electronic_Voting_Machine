@@ -344,39 +344,6 @@ public:
         return c;
     }
 };
-class Election {
-public:
-    Candidate* candidates[MAX_CANDIDATES];
-    int candidateCount;
-
-    Election() : candidateCount(0) {}
-
-    void displayCandidates() const
-    {
-        cout << "\nCandidates:\n";
-        for (int i = 0; i < candidateCount; i++) 
-        {
-            candidates[i]->displayInfo();
-        }
-    }
-
-    void showResults() const 
-    {
-        cout << "\nElection Results:\n";
-        for (int i = 0; i < candidateCount; i++)
-        {
-            candidates[i]->displayInfo();
-        }
-    }
-
-    ~Election() 
-    {
-        for (int i = 0; i < candidateCount; i++)
-        {
-            delete candidates[i];
-        }
-    }
-};
 // ---------- Base Election Class ----------
 class Election {
 protected:
@@ -487,16 +454,5 @@ public:
 };
 
 
-
-
-
-int main() 
-{
-    Election election;
-    Admin admin;
-    admin.adminMenu(election);
-    cout << "\nProgram terminated.\n";
-    return 0;
-}
 
 
