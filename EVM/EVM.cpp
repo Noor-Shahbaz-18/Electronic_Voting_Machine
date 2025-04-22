@@ -19,8 +19,13 @@ public:
 };
 class Voter : public User {
     int voterId;
+    string cnic;
+    string postalCode;
 public:
-    Voter(string u, string p, int id) : User(u, p), voterId(id) {}
+    Voter(string u, string p, int id, string cnic, string postal) : User(u, p), voterId(id) {
+        this->cnic = cnic;
+        this->postalCode = postal;
+    }
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
         cout << "1. View Elections" << endl;
@@ -54,6 +59,25 @@ public:
             voters[numVoters++] = Voter(username, password, id);
         }
         file.close();
+    }
+    string getPostalCode() {
+        return postalCode;
+    }
+    static bool isValidCNIC(const string& cnic) {
+        return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
+    }
+    static bool isValidPostalCode(const string& code) {
+        return code.length() == 5 && all_of(code.begin(), code.end(), ::isdigit);
+    }
+    void inputRegionInfo() {
+        do {
+            cout << "Enter 11-digit CNIC: ";
+            cin >> cnic;
+        } while (!isValidCNIC(cnic));
+        do {
+            cout << "Enter 5-digit Postal Code: ";
+            cin >> postalCode;
+        } while (!isValidPostalCode(postalCode));
     }
 };
 class Candidate 
@@ -435,11 +459,3 @@ public:
         } while (choice != 7);
     }
 };
-
-
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 6e4901ebb675d519113e8c7a1aeb6b18c805aff6
