@@ -19,8 +19,13 @@ public:
 };
 class Voter : public User {
     int voterId;
+    string cnic;
+    string postalCode;
 public:
-    Voter(string u, string p, int id) : User(u, p), voterId(id) {}
+    Voter(string u, string p, int id, string cnic, string postal) : User(u, p), voterId(id) {
+        this->cnic = cnic;
+        this->postalCode = postal;
+    }
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
         cout << "1. View Elections" << endl;
@@ -54,6 +59,25 @@ public:
             voters[numVoters++] = Voter(username, password, id);
         }
         file.close();
+    }
+    string getPostalCode() {
+        return postalCode;
+    }
+    static bool isValidCNIC(const string& cnic) {
+        return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
+    }
+    static bool isValidPostalCode(const string& code) {
+        return code.length() == 5 && all_of(code.begin(), code.end(), ::isdigit);
+    }
+    void inputRegionInfo() {
+        do {
+            cout << "Enter 11-digit CNIC: ";
+            cin >> cnic;
+        } while (!isValidCNIC(cnic));
+        do {
+            cout << "Enter 5-digit Postal Code: ";
+            cin >> postalCode;
+        } while (!isValidPostalCode(postalCode));
     }
 };
 class Candidate 
@@ -436,8 +460,81 @@ public:
         } while (choice != 7);
     }
 };
+int main() {
+    int choice;
+    NationalElection national("National Election 2025", "Pakistan");
+    ProvincialElection provincial("Provincial Election 2025", "Punjab");
 
+    // Adding candidates using addCandidate() function
+    national.addCandidate("Ali Khan", "Party A");
+    national.addCandidate("Sara Ahmed", "Party B");
+    provincial.addCandidate("Imran Raza", "Party C");
+    provincial.addCandidate("Mehwish Tariq", "Party D");
 
+    Voter voters[MAX_USERS];
+    int voterCount = 0;
+    Voter::loadVoterData(voters, voterCount);
 
+    string username, password;
+    cout << "Login as voter\nUsername: ";
+    cin >> username;
+    cout << "Password: ";
+    cin >> password;
 
+    Voter* currentVoter = nullptr;
+    for (int i = 0; i < voterCount; i++) {
+        if (voters[i].login(username, password)) {
+            currentVoter = &voters[i];
+            break;
+        }
+    }
+
+    if (!currentVoter) {
+        cout << "Invalid credentials!" << endl;
+        return 1;
+    }
+
+    do {
+        cout << "\n==== Voter Menu ====" << endl;
+        cout << "1. View National Election Candidates" << endl;
+        cout << "2. Vote in National Election" << endl;
+        cout << "3. View Provincial Election Candidates" << endl;
+        cout << "4. Vote in Provincial Election" << endl;
+        cout << "5. View National Results" << endl;
+        cout << "6. View Provincial Results" << endl;
+        cout << "7. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            national.showElectionType();
+            national.displayCandidates();
+            break;
+        case 2:
+            currentVoter->castVote(national);
+            break;
+        case 3:
+            provincial.showElectionType();
+            provincial.displayCandidates();
+            break;
+        case 4:
+            currentVoter->castVote(provincial);
+            break;
+        case 5:
+            national.showResults();
+            break;
+        case 6:
+            provincial.showResults();
+            break;
+        case 7:
+            cout << "Exiting..." << endl;
+            break;
+        default:
+            cout << "Invalid choice. Try again." << endl;
+        }
+    } while (choice != 7);
+
+    return 0;
+}
 
