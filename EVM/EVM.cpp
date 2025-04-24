@@ -1,221 +1,161 @@
-#include<iostream>
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
+#include <algorithm>
 using namespace std;
+
 const int MAX_USERS = 10;
 const int MAX_CANDIDATES = 10;
+
 class User {
 protected:
     string username;
     string password;
 public:
-    User(string u, string p) : username(u), password(p) {} // constructor initializor list
-    bool login(const string& user, const string& pass) {  // function to check whether correct(pass or user)
+    User(string u, string p) : username(u), password(p) {}
+    bool login(const string& user, const string& pass) {
         return username == user && password == pass;
-     }
-
-    virtual void showMenu() = 0; 
+    }
+    virtual void showMenu() = 0;
 };
+
 class Voter : public User {
     int voterId;
     string cnic;
     string postalCode;
+    bool hasVoted = false;
 public:
-    Voter(string u, string p, int id, string cnic, string postal) : User(u, p), voterId(id) {
-        this->cnic = cnic;
-        this->postalCode = postal;
-    }
+    Voter() : User("", ""), voterId(0) {}
+    Voter(string u, string p, int id, string cnic, string postal)
+        : User(u, p), voterId(id), cnic(cnic), postalCode(postal) {}
+
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
         cout << "1. View Elections" << endl;
         cout << "2. Cast Vote" << endl;
     }
-    int getId() const
-    {
-        return voterId;
-    }
-    void viewElections() {
-        cout << "Displaying available elections..." << endl;
-    }
-    void castVote() {
-        cout << "Casting vote..." << endl;
-    }
-    // Load voter credentials from file (as already done)
-    static void loadVoterData(Voter voters[], int& numVoters) {
-        ifstream file("voters.txt");
-        if (!file) {
-            cout << "Error opening voters file!" << endl;
-            return;
-        }
-        string line;
-        while (getline(file, line)) {
-            stringstream ss(line);
-            string username, password;
-            int id;
-            getline(ss, username, ',');
-            getline(ss, password, ',');
-            ss >> id;
-            voters[numVoters++] = Voter(username, password, id);
-        }
-        file.close();
-    }
-    string getPostalCode() {
-        return postalCode;
-    }
+
+    int getId() const { return voterId; }
+
+    string getPostalCode() const { return postalCode; }
+
+    string getCNIC() const { return cnic; }
+
+    bool getHasVoted() const { return hasVoted; }
+
+    void setHasVoted(bool voted) { hasVoted = voted; }
+
     static bool isValidCNIC(const string& cnic) {
         return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
     }
+
     static bool isValidPostalCode(const string& code) {
         return code.length() == 5 && all_of(code.begin(), code.end(), ::isdigit);
     }
-    void inputRegionInfo() {
-        do {
-            cout << "Enter 11-digit CNIC: ";
-            cin >> cnic;
-        } while (!isValidCNIC(cnic));
-        do {
-            cout << "Enter 5-digit Postal Code: ";
-            cin >> postalCode;
-        } while (!isValidPostalCode(postalCode));
-    }
 };
-class Candidate 
-{
-private:
+
+class Candidate {
     string name;
     string party;
     int votes;
-
 public:
+    Candidate() : votes(0) {}
     Candidate(string n, string p) : name(n), party(p), votes(0) {}
-    void incrementVotes() 
-    {
-        votes++;
-    }
-    void displayInfo() const
-    {
+
+    void incrementVotes() { votes++; }
+
+    void displayInfo() const {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
-    string getName() const {
-        return name;
-    }
-    string getParty() const {
-        return party;
-    }
-    int getVotes() const {
-        return votes;
-    }
-    void saveToFile(ofstream& file) const
-    {
-        file << name << "," << party << "," << votes << endl;
-    }
-    static Candidate loadFromFile(const string& data) {
-        stringstream ss(data);
-        string name, party;
-        int votes;
-        getline(ss, name, ',');
-        getline(ss, party, ',');
-        ss >> votes;
-        Candidate* c = new Candidate(name, party);
-        c->votes = votes;
-        return c;
-    }
+
+    string getName() const { return name; }
+
+    string getParty() const { return party; }
+
+    int getVotes() const { return votes; }
 };
 
-// ---------- Base Election Class ----------
 class Election {
 protected:
     string title;
-    Candidate candidates[100];
-    Voter voters[100];
+    Candidate candidates[MAX_CANDIDATES];
     int candidateCount;
+    Voter voters[100];
     int voterCount;
 
 public:
-    Election(string title) : title(title), candidateCount(0), voterCount(0) {}
+    Election(string t) : title(t), candidateCount(0), voterCount(0) {}
+
     virtual void showElectionType() {
         cout << "Generic Election" << endl;
     }
-    void addCandidate(string name, int id)
-    {
-        candidates[candidateCount++] = Candidate(name, id);
-        cout << "  - Candidate '" << name << "' added successfully." << endl;
-    }
-    void showCandidates()
-    {
-        cout << "\n------------ Candidates ------------\n";
-        for (int i = 0; i < candidateCount; i++) {
-            cout << "ID: " << candidates[i].getId()
-                << " | Name: " << candidates[i].getName() << endl;
-        }
-    }
-    void loadVotersFromFile(const string& filename)
-    {
-        ifstream file(filename);
-        if (!file)
-        {
-            cout << "Error: Cannot open file " << filename << endl;
-            return;
-        }
-        string name, cnic, postal;
-        int id;
-        while (getline(file, name, ',')) {
-            file >> id;
-            file.ignore();
-            getline(file, cnic, ',');
-            getline(file, postal);
-            voters[voterCount++] = Voter(name, id, cnic, postal);
-        }
-        file.close();
-        cout << " Voter data loaded successfully.\n";
-    }
-    void showCandidates() {
-        cout << "\n------------ Candidates ------------\n";
-        for (int i = 0; i < candidateCount; i++) {
-            cout << "ID: " << candidates[i].getId()
-                << " | Name: " << candidates[i].getName() << endl;
-        }
-    }
 
-    void secureVote(string cnic, string postalCode, int candidateId) {
-        bool voterFound = false;
-        for (int i = 0; i < voterCount; i++) {
-            if (voters[i].cnic == cnic && voters[i].postalCode == postalCode) {
-                voterFound = true;
+    void addCandidate(string name, string party) {
+        if (candidateCount < MAX_CANDIDATES) {
 
-                if (voters[i].hasVoted) {
-                    cout << "\n You have already voted!" << endl;
-                    return;
-                }
-                bool candidateFound = false;
-                for (int j = 0; j < candidateCount; j++) {
-                    if (candidates[j].getId() == candidateId) {
-                        candidates[j].addVote();
-                        voters[i].hasVoted = true;
-                        cout << "\n Vote cast for " << candidates[j].getName() << "!\n";
-                        candidateFound = true;
-                        break;
-                    }
-                }
 
-                if (!candidateFound) {
-                    cout << "\nInvalid Candidate ID!\n";
-                }
+            int id = candidateCount + 1; // or any unique ID logic
+            Candidate c(name, party);
 
+            // Save to file
+            ofstream file("candidates.txt", ios::app); // append mode
+            if (file.is_open()) {
+                file << name << "," << party << "," << 0 << endl; // votes = 0 initially
+                file.close();
+            }
+            else {
+                cout << "Error: Could not open candidate file for writing." << endl;
                 return;
             }
+
+            // Add to array
+            candidates[candidateCount++] = c;
+
+            cout << "Candidate '" << name << "' added and stored in file." << endl;
         }
-        if (!voterFound) {
-            cout << "\n CNIC or Postal Code did not match our records!\n";
+        else {
+            cout << "Maximum candidates reached!" << endl;
         }
+    }
+
+
+    void displayCandidates() {
+        cout << "\n--- Candidates List ---\n";
+        for (int i = 0; i < candidateCount; i++)
+        {
+            cout << i + 1 << ". ";
+            candidates[i].displayInfo();
+        }
+    }
+
+    void secureVote(string cnic, string postalCode, int candidateIndex) {
+        for (int i = 0; i < voterCount; i++) {
+            if (voters[i].getCNIC() == cnic && voters[i].getPostalCode() == postalCode) {
+                if (voters[i].getHasVoted()) {
+                    cout << "You have already voted!" << endl;
+                    return;
+                }
+                if (candidateIndex >= 0 && candidateIndex < candidateCount) {
+                    candidates[candidateIndex].incrementVotes();
+                    voters[i].setHasVoted(true);
+                    cout << "Vote cast for " << candidates[candidateIndex].getName() << "!\n";
+                    return;
+                }
+                else {
+                    cout << "Invalid candidate index!" << endl;
+                    return;
+                }
+            }
+        }
+        cout << "CNIC or Postal Code not found!" << endl;
     }
 
     void showResults() {
-        cout << "\n------------ Election Results: " << title << " ------------\n";
+        cout << "\n--- Election Results ---\n";
         for (int i = 0; i < candidateCount; i++) {
-            cout << setw(20) << left << candidates[i].getName()
-                << " | Votes: " << candidates[i].votes << endl;
+            cout << setw(20) << left << candidates[i].getName() << " | Votes: " << candidates[i].getVotes() << endl;
         }
     }
 
@@ -223,35 +163,34 @@ public:
         int maxVotes = -1;
         string winner = "None";
         for (int i = 0; i < candidateCount; i++) {
-            if (candidates[i].votes > maxVotes) {
-                maxVotes = candidates[i].votes;
+            if (candidates[i].getVotes() > maxVotes) {
+                maxVotes = candidates[i].getVotes();
                 winner = candidates[i].getName();
             }
         }
-        cout << "\n Winner: " << winner << " with " << maxVotes << " votes!" << endl;
+        cout << "\nWinner: " << winner << " with " << maxVotes << " votes!" << endl;
     }
 };
 
-// ---------- Derived National Election ----------
 class NationalElection : public Election {
     string country;
 public:
-    NationalElection(string title, string country) : Election(title), country(country) {}
-
+    NationalElection(string title, string c) : Election(title), country(c) {}
     void showElectionType() override {
-        cout << "\nNational Election in " << country << endl;
+        cout << "National Election - Country: " << country << endl;
     }
 };
-// ---------- Derived Provincial Election ----------
+
 class ProvincialElection : public Election {
     string province;
 public:
-    ProvincialElection(string title, string province) : Election(title), province(province) {}
-
+    ProvincialElection(string title, string p) : Election(title), province(p) {}
     void showElectionType() override {
-        cout << "\n Provincial Election in " << province << endl;
+        cout << "Provincial Election - Province: " << province << endl;
     }
 };
+
+// ----------------- Admin Class ---------------------
 class Admin {
 private:
     bool isUsernameExists(const string& username) {
@@ -268,6 +207,7 @@ private:
         file.close();
         return false;
     }
+
     bool isValidPassword(const string& password) {
         return password.length() >= 6;
     }
@@ -291,16 +231,16 @@ private:
     bool isValidPostalCode(int postalCode) {
         return (postalCode >= 10000 && postalCode <= 99999);
     }
+
 public:
     void registerAdmin() {
-        string username;
-        string password;
+        string username, password;
 
         while (true) {
             cout << "Enter username: ";
             getline(cin, username);
             if (isUsernameExists(username)) {
-                cout << "Username already exists. Enter another username: ";
+                cout << "Username already exists. Enter another.\n";
             }
             else break;
         }
@@ -311,6 +251,7 @@ public:
             if (isValidPassword(password)) break;
             else cout << "Password should consist of at least 6 characters.\n";
         }
+
         ofstream file("admins.txt", ios::app);
         if (file.is_open()) {
             file << username << "," << password << endl;
@@ -318,12 +259,12 @@ public:
             cout << "Admin registered successfully.\n";
         }
         else {
-            cout << "Error in data saving to file.\n";
+            cout << "Error in saving data.\n";
         }
     }
+
     bool loginAdmin() {
-        string username;
-        string password;
+        string username, password;
         cout << "Enter username: ";
         getline(cin, username);
         cout << "Enter password: ";
@@ -336,17 +277,19 @@ public:
             string storedUsername = line.substr(0, pos);
             string storedPassword = line.substr(pos + 1);
             if (storedUsername == username && storedPassword == password) {
-                cout << "Admin login successfully.\n";
+                cout << "Admin login successful.\n";
                 return true;
             }
         }
-        cout << "Invalid username or password.\n" << endl;
+        cout << "Invalid username or password.\n";
         return false;
     }
+
     void addVoter(const string& filename) {
         ofstream file(filename, ios::app);
         if (!file) {
-            cout << "Error in opening file: " << filename << endl;
+            cout << "Error opening file: " << filename << endl;
+            return;
         }
 
         string name;
@@ -358,7 +301,7 @@ public:
             cout << "Enter Name: ";
             getline(cin, name);
             if (isValidName(name)) break;
-            cout << "Invalid name. Only alphabets and spaces are allowed.\n";
+            cout << "Invalid name.\n";
         }
 
         while (true) {
@@ -374,13 +317,13 @@ public:
             cout << "Enter CNIC: ";
             getline(cin, cnic);
             if (isValidCNIC(cnic)) break;
-            cout << "Invalid CNIC. Only digits and hyphens are allowed.\n";
+            cout << "Invalid CNIC.\n";
         }
 
         while (true) {
             cout << "Enter Postal Code: ";
             if (cin >> postalCode && isValidPostalCode(postalCode)) break;
-            cout << "Invalid postal code. Must be exactly 5 digits.\n";
+            cout << "Invalid postal code.\n";
             cin.clear();
             cin.ignore(1000, '\n');
         }
@@ -389,25 +332,18 @@ public:
         file.close();
         cout << "Voter added successfully.\n";
     }
+
     void addCandidateToElection(Election& election) {
         string name, party;
         cout << "Enter Candidate Name: ";
         getline(cin, name);
-        cout << "Enter Candidate Party Name: ";
+        cout << "Enter Party Name: ";
         getline(cin, party);
 
-        if (election.candidateCount >= MAX_CANDIDATES) {
-            cout << "Maximum candidates reached.\n";
-            return;
-        }
-
-        Candidate* newCandidate = new Candidate(name, party);
-        election.candidates[election.candidateCount++] = newCandidate;
-        cout << "Candidate added successfully.\n";
+        election.addCandidate(name, party);
     }
-    void adminMenu(Election& election) {
-        election.loadCandidatesFromFile("candidates.txt");
 
+    void adminMenu(Election& election) {
         bool isLoggedIn = false;
         int choice;
 
@@ -416,11 +352,11 @@ public:
             cout << "1. Register Admin\n";
             cout << "2. Login Admin\n";
             cout << "3. Add Voter\n";
-            cout << "4. Add Candidate to Election\n";
+            cout << "4. Add Candidate\n";
             cout << "5. Display Candidates\n";
-            cout << "6. Show Election Results\n";
+            cout << "6. Show Results\n";
             cout << "7. Exit\n";
-            cout << "Enter your choice: ";
+            cout << "Choice: ";
             cin >> choice;
             cin.ignore();
 
@@ -438,10 +374,8 @@ public:
                     cout << "Please login first.\n";
                 break;
             case 4:
-                if (isLoggedIn) {
+                if (isLoggedIn)
                     addCandidateToElection(election);
-                    election.saveCandidatesToFile("candidates.txt");
-                }
                 else
                     cout << "Please login first.\n";
                 break;
@@ -450,91 +384,21 @@ public:
                 break;
             case 6:
                 election.showResults();
+                election.showWinner();
                 break;
             case 7:
                 cout << "Exiting Admin Menu.\n";
                 break;
             default:
-                cout << "Invalid choice. Try again.\n";
+                cout << "Invalid choice.\n";
             }
         } while (choice != 7);
     }
 };
+
 int main() {
-    int choice;
-    NationalElection national("National Election 2025", "Pakistan");
-    ProvincialElection provincial("Provincial Election 2025", "Punjab");
-
-    // Adding candidates using addCandidate() function
-    national.addCandidate("Ali Khan", "Party A");
-    national.addCandidate("Sara Ahmed", "Party B");
-    provincial.addCandidate("Imran Raza", "Party C");
-    provincial.addCandidate("Mehwish Tariq", "Party D");
-
-    Voter voters[MAX_USERS];
-    int voterCount = 0;
-    Voter::loadVoterData(voters, voterCount);
-
-    string username, password;
-    cout << "Login as voter\nUsername: ";
-    cin >> username;
-    cout << "Password: ";
-    cin >> password;
-
-    Voter* currentVoter = nullptr;
-    for (int i = 0; i < voterCount; i++) {
-        if (voters[i].login(username, password)) {
-            currentVoter = &voters[i];
-            break;
-        }
-    }
-
-    if (!currentVoter) {
-        cout << "Invalid credentials!" << endl;
-        return 1;
-    }
-
-    do {
-        cout << "\n==== Voter Menu ====" << endl;
-        cout << "1. View National Election Candidates" << endl;
-        cout << "2. Vote in National Election" << endl;
-        cout << "3. View Provincial Election Candidates" << endl;
-        cout << "4. Vote in Provincial Election" << endl;
-        cout << "5. View National Results" << endl;
-        cout << "6. View Provincial Results" << endl;
-        cout << "7. Exit" << endl;
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-        case 1:
-            national.showElectionType();
-            national.displayCandidates();
-            break;
-        case 2:
-            currentVoter->castVote(national);
-            break;
-        case 3:
-            provincial.showElectionType();
-            provincial.displayCandidates();
-            break;
-        case 4:
-            currentVoter->castVote(provincial);
-            break;
-        case 5:
-            national.showResults();
-            break;
-        case 6:
-            provincial.showResults();
-            break;
-        case 7:
-            cout << "Exiting..." << endl;
-            break;
-        default:
-            cout << "Invalid choice. Try again." << endl;
-        }
-    } while (choice != 7);
-
+    NationalElection ne("National Election 2025", "Pakistan");
+    Admin admin;
+    admin.adminMenu(ne);
     return 0;
 }
-
