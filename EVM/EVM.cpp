@@ -181,13 +181,80 @@ public:
     }
 };
 
+
 class ProvincialElection : public Election {
     string province;
+
+    const string provinces[4] = { "Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan" };
+    const string regions[4][3] = {
+        {"Lahore", "Rawalpindi", "Multan"},
+        {"Karachi", "Hyderabad", "Sukkur"},
+        {"Peshawar", "Abbottabad", "Mardan"},
+        {"Quetta", "Gwadar", "Turbat"}
+    };
+
 public:
     ProvincialElection(string title, string p) : Election(title), province(p) {}
+
     void showElectionType() override {
         cout << "Provincial Election - Province: " << province << endl;
     }
+
+    void castProvincialVote() {
+        cout << "\nSelect your Province from the list below:\n";
+        for (int i = 0; i < 4; i++) {
+            cout << i + 1 << ". " << provinces[i] << endl;
+        }
+
+        int provinceChoice;
+        cout << "Enter the province number (1-4): ";
+        cin >> provinceChoice;
+        cin.ignore();
+
+        if (provinceChoice < 1 || provinceChoice > 4) {
+            cout << "Invalid province selection.\n";
+            return;
+        }
+
+        province = provinces[provinceChoice - 1]; // Save selected province
+        cout << "\nYou selected: " << province << endl;
+
+        cout << "\nNow select your Region in " << province << ":\n";
+        for (int j = 0; j < 3; j++) {
+            cout << j + 1 << ". " << regions[provinceChoice - 1][j] << endl;
+        }
+
+        int regionChoice;
+        cout << "Enter the region number (1-3): ";
+        cin >> regionChoice;
+        cin.ignore();
+
+        if (regionChoice < 1 || regionChoice > 3) {
+            cout << "Invalid region selection.\n";
+            return;
+        }
+
+        string selectedRegion = regions[provinceChoice - 1][regionChoice - 1];
+        cout << "\nYou selected region: " << selectedRegion << endl;
+
+        // Now get CNIC and Postal Code
+        string cnic, postalCode;
+        cout << "\nEnter your CNIC (without dashes): ";
+        getline(cin, cnic);
+        cout << "Enter your Postal Code: ";
+        getline(cin, postalCode);
+
+        // Show candidates
+        displayCandidates();
+        int candidateIndex;
+        cout << "Enter the number of the candidate you want to vote for: ";
+        cin >> candidateIndex;
+        cin.ignore();
+
+        // Cast the vote
+        secureVote(cnic, postalCode, candidateIndex - 1);
+    }
+
 };
 
 // ----------------- Admin Class ---------------------
