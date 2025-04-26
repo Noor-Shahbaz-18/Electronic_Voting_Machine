@@ -122,13 +122,31 @@ public:
 
 
     void displayCandidates() {
-        cout << "\n--- Candidates List ---\n";
-        for (int i = 0; i < candidateCount; i++)
-        {
-            cout << i + 1 << ". ";
-            candidates[i].displayInfo();
-        }
+    ifstream file("candidates.txt");
+    if (!file.is_open()) {
+        cout << "Error: Could not open candidate file for reading." << endl;
+        return;
     }
+
+    cout << "\n--- Candidates List ---\n";
+    string line;
+    int count = 1;
+
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string idStr, name, party, votesStr;
+
+        getline(ss, idStr, ',');
+        getline(ss, name, ',');
+        getline(ss, party, ',');
+        getline(ss, votesStr, ',');
+
+        cout << count++ << ". ";
+        cout << "ID: " << idStr << ", Name: " << name << ", Party: " << party << ", Votes: " << votesStr << endl;
+    }
+
+    file.close();
+}
 
     void secureVote(string cnic, string postalCode, int candidateIndex) {
         for (int i = 0; i < voterCount; i++) {
