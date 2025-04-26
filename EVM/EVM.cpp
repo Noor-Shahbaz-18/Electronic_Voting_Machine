@@ -482,8 +482,58 @@ public:
 };
 
 int main() {
-    NationalElection ne("National Election 2025", "Pakistan");
+    NationalElection nationalElection("National Election 2025", "Pakistan");
+    ProvincialElection provincialElection("Provincial Election 2025", "Pakistan");
     Admin admin;
-    admin.adminMenu(ne);
+
+    int userChoice;
+    cout << "Welcome to the Election System!\n";
+    cout << "Are you:\n";
+    cout << "1. Admin\n";
+    cout << "2. Voter\n";
+    cout << "Enter your choice: ";
+    cin >> userChoice;
+    cin.ignore(); // to clear input buffer
+
+    if (userChoice == 1) {
+        // Admin section
+        admin.adminMenu(nationalElection); // Admin will manage NationalElection (you can change if needed)
+    }
+    else if (userChoice == 2) {
+        // Voter section
+        int electionChoice;
+        cout << "\nWhich Election you want to participate in?\n";
+        cout << "1. National Election\n";
+        cout << "2. Provincial Election\n";
+        cout << "Enter your choice: ";
+        cin >> electionChoice;
+        cin.ignore(); // to clear input buffer
+
+        if (electionChoice == 1) {
+            nationalElection.displayCandidates();
+            string cnic, postalCode;
+            int candidateIndex;
+            cout << "\nEnter your CNIC: ";
+            getline(cin, cnic);
+            cout << "Enter your Postal Code: ";
+            getline(cin, postalCode);
+            cout << "\nEnter the number of the candidate you want to vote for: ";
+            cin >> candidateIndex;
+            cin.ignore();
+
+            nationalElection.secureVote(cnic, postalCode, candidateIndex - 1);
+        }
+        else if (electionChoice == 2) {
+            provincialElection.castProvincialVote();
+        }
+        else {
+            cout << "Invalid election choice.\n";
+        }
+    }
+    else {
+        cout << "Invalid choice. Exiting program.\n";
+    }
+
     return 0;
 }
+
