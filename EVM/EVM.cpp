@@ -13,8 +13,7 @@ public:
     User(string u, string p) : username(u), password(p) {} // constructor initializor list
     bool login(const string& user, const string& pass) {  // function to check whether correct(pass or user)
         return username == user && password == pass;
-     }
-
+    }
     virtual void showMenu() = 0; 
 };
 class Voter : public User {
@@ -64,11 +63,29 @@ public:
         return postalCode;
     }
     static bool isValidCNIC(const string& cnic) {
-        return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
+        if (cnic.length() != 11) {
+            return false;
+        }
+        for (int i = 0; i < cnic.length(); i++) {
+            if (cnic[i] < '0' || cnic[i] > '9') {
+                return false;
+            }
+        }
+        return true;
     }
+
     static bool isValidPostalCode(const string& code) {
-        return code.length() == 5 && all_of(code.begin(), code.end(), ::isdigit);
+        if (code.length() != 5) {
+            return false;
+        }
+        for (int i = 0; i < code.length(); i++) {
+            if (code[i] < '0' || code[i] > '9') {
+                return false;
+            }
+        }
+        return true;
     }
+
     void inputRegionInfo() {
         do {
             cout << "Enter 11-digit CNIC: ";
