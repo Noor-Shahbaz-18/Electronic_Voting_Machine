@@ -9,6 +9,80 @@ using namespace std;
 const int MAX_USERS = 10;
 const int MAX_CANDIDATES = 10;
 
+// Function to change text color
+void SetTextColor(int color)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
+
+// Function to set position of text on page
+void gotoxy(int x, int y)
+{
+    COORD coordinate;
+    coordinate.X = x;
+    coordinate.Y = y;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hConsole, coordinate);
+}
+
+void clearScreen()
+{
+    system("cls");
+}
+
+// Function to pause the program
+void pause()
+{
+    system("pause"); // Waits for user input to continue
+}
+// Function to display login page
+void login()
+{
+    SetTextColor(13);
+    gotoxy(6, 17);
+    cout << " _       _______ _________________               _______         _______ _______ _______ _______ _______ _______         _       _            ";
+    gotoxy(6, 18);
+    cout << "( \\     (  ___  (  ____ \\__   __( (    /|       (  ____ |\\     /(  ____ (  ____ (  ____ (  ____ (  ____ (  ____ |\\     /( \\     ( \\  |\\     /|";
+    gotoxy(6, 19);
+    cout << "| (     | (   ) | (    \\/  ) (  |  \\  ( |       | (    \\| )   ( | (    \\| (    \\| (    \\| (    \\| (    \\| (    \\| )   ( | (     | (  ( \\   / )";
+    gotoxy(6, 20);
+    cout << "| |     | |   | | |        | |  |   \\ | |       | (_____| |   | | |     | |     | (__   | (_____| (_____| (__   | |   | | |     | |   \\ (_) / ";
+    gotoxy(6, 21);
+    cout << "| |     | |   | | | ____   | |  | (\\ \\) |       (_____  | |   | | |     | |     |  __)  (_____  (_____  |  __)  | |   | | |     | |    \\   /  ";
+    gotoxy(6, 22);
+    cout << "| |     | |   | | | \\_  )  | |  | | \\   |             ) | |   | | |     | |     | (           ) |     ) | (     | |   | | |     | |     ) (   ";
+    gotoxy(6, 23);
+    cout << "| (____/| (___) | (___) ___) (__| )  \\  |       /\\____) | (___) | (____/| (____/| (____//\\____) /\\____) | )     | (___) | (____/| (____/| |   ";
+    gotoxy(6, 24);
+    cout << "(_______(_______(_______\\_______|/    )_)       \\_______(_______(_______(_______(_______\\_______\\_______|/      (_______(_______(_______\\_/   ";
+    cout << endl << endl;
+}
+
+void logout()
+{
+    SetTextColor(13);
+    gotoxy(52, 17);
+    cout << " _       _______ _______	     _______        _________";
+    gotoxy(52, 18);
+    cout << "( \\     (  ___  (  ____ \\       (  ___  |\\     /\\__   __/";
+    gotoxy(52, 19);
+    cout << "| (     | (   ) | (    \\/       | (   ) | )   ( |  ) (   ";
+    gotoxy(52, 20);
+    cout << "| |     | |   | | |             | |   | | |   | |  | |   ";
+    gotoxy(52, 21);
+    cout << "| |     | |   | | | ____        | |   | | |   | |  | |   ";
+    gotoxy(52, 22);
+    cout << "| |     | |   | | | ____        | |   | | |   | |  | |   ";
+    gotoxy(52, 23);
+    cout << "| |     | |   | | | \\_  )       | |   | | |   | |  | |   ";
+    gotoxy(52, 24);
+    cout << "| (____/| (___) | (___) |       | (___) | (___) |  | |   ";
+    gotoxy(52, 25);
+    cout << "(_______(_______(_______)       (_______(_______)  )_(   ";
+    cout << endl << endl;
+}
+
 class User
 {
 protected:
