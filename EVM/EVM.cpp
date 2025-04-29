@@ -36,6 +36,29 @@ void pause()
 {
     system("pause"); // Waits for user input to continue
 }
+
+// function to display e voting
+void frontpage()
+{
+    SetTextColor(13);
+    gotoxy(46, 17);
+    cout << " _______                          _______ __________________ _        _______ \n";
+    gotoxy(46, 18);
+    cout << "(  ____ \\               |\\     /|(  ___  )\\__   __/\\__   __/( (    /|(  ____ \\\n";
+    gotoxy(46, 19);
+    cout << "| (    \\/               | )   ( || (   ) |   ) (      ) (   |  \\  ( || (    \\/\n";
+    gotoxy(46, 20);
+    cout << "| (__         _____     | |   | || |   | |   | |      | |   |   \\ | || |      \n";
+    gotoxy(46, 21);
+    cout << "|  __)       (_____)    ( (   ) )| |   | |   | |      | |   | (\\ \\) || | ____ \n";
+    gotoxy(46, 22);
+    cout << "| (                      \\ \\_/ / | |   | |   | |      | |   | | \\   || | \\_  )\n";
+    gotoxy(46, 23);
+    cout << "| (____/\\                 \\   /  | (___) |   | |   ___) (___| )  \\  || (___) |\n";
+    gotoxy(46, 24);
+    cout << "(_______/                  \\_/   (_______)   )_(   \\_______/|/    )_)(_______)\n";   
+}
+
 // Function to display login page
 void login()
 {
