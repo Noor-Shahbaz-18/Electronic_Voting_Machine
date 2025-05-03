@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <windows.h>
 using namespace std;
 const int MAX_USERS = 10;
 const int MAX_CANDIDATES = 10;
