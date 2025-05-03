@@ -5,9 +5,103 @@
 #include <iomanip>
 #include <algorithm>
 using namespace std;
-
 const int MAX_USERS = 10;
 const int MAX_CANDIDATES = 10;
+// Function to change text color
+void SetTextColor(int color)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
+// Function to set position of text on page
+void gotoxy(int x, int y)
+{
+    COORD coordinate;
+    coordinate.X = x;
+    coordinate.Y = y;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hConsole, coordinate);
+}
+
+void clearScreen()
+{
+    system("cls");
+}
+
+// Function to pause the program
+void pause()
+{
+    system("pause"); // Waits for user input to continue
+}
+
+// function to display e voting
+void frontpage()
+{
+    SetTextColor(13);
+    gotoxy(46, 17);
+    cout << " _______                          _______ __________________ _        _______ \n";
+    gotoxy(46, 18);
+    cout << "(  ____ \\               |\\     /|(  ___  )\\__   __/\\__   __/( (    /|(  ____ \\\n";
+    gotoxy(46, 19);
+    cout << "| (    \\/               | )   ( || (   ) |   ) (      ) (   |  \\  ( || (    \\/\n";
+    gotoxy(46, 20);
+    cout << "| (__         _____     | |   | || |   | |   | |      | |   |   \\ | || |      \n";
+    gotoxy(46, 21);
+    cout << "|  __)       (_____)    ( (   ) )| |   | |   | |      | |   | (\\ \\) || | ____ \n";
+    gotoxy(46, 22);
+    cout << "| (                      \\ \\_/ / | |   | |   | |      | |   | | \\   || | \\_  )\n";
+    gotoxy(46, 23);
+    cout << "| (____/\\                 \\   /  | (___) |   | |   ___) (___| )  \\  || (___) |\n";
+    gotoxy(46, 24);
+    cout << "(_______/                  \\_/   (_______)   )_(   \\_______/|/    )_)(_______)\n";   
+}
+
+// Function to display login page
+void login()
+{
+    SetTextColor(13);
+    gotoxy(6, 17);
+    cout << " _       _______ _________________               _______         _______ _______ _______ _______ _______ _______         _       _            ";
+    gotoxy(6, 18);
+    cout << "( \\     (  ___  (  ____ \\__   __( (    /|       (  ____ |\\     /(  ____ (  ____ (  ____ (  ____ (  ____ (  ____ |\\     /( \\     ( \\  |\\     /|";
+    gotoxy(6, 19);
+    cout << "| (     | (   ) | (    \\/  ) (  |  \\  ( |       | (    \\| )   ( | (    \\| (    \\| (    \\| (    \\| (    \\| (    \\| )   ( | (     | (  ( \\   / )";
+    gotoxy(6, 20);
+    cout << "| |     | |   | | |        | |  |   \\ | |       | (_____| |   | | |     | |     | (__   | (_____| (_____| (__   | |   | | |     | |   \\ (_) / ";
+    gotoxy(6, 21);
+    cout << "| |     | |   | | | ____   | |  | (\\ \\) |       (_____  | |   | | |     | |     |  __)  (_____  (_____  |  __)  | |   | | |     | |    \\   /  ";
+    gotoxy(6, 22);
+    cout << "| |     | |   | | | \\_  )  | |  | | \\   |             ) | |   | | |     | |     | (           ) |     ) | (     | |   | | |     | |     ) (   ";
+    gotoxy(6, 23);
+    cout << "| (____/| (___) | (___) ___) (__| )  \\  |       /\\____) | (___) | (____/| (____/| (____//\\____) /\\____) | )     | (___) | (____/| (____/| |   ";
+    gotoxy(6, 24);
+    cout << "(_______(_______(_______\\_______|/    )_)       \\_______(_______(_______(_______(_______\\_______\\_______|/      (_______(_______(_______\\_/   ";
+    cout << endl << endl;
+}
+
+void logout()
+{
+    SetTextColor(13);
+    gotoxy(52, 17);
+    cout << " _       _______ _______	     _______        _________";
+    gotoxy(52, 18);
+    cout << "( \\     (  ___  (  ____ \\       (  ___  |\\     /\\__   __/";
+    gotoxy(52, 19);
+    cout << "| (     | (   ) | (    \\/       | (   ) | )   ( |  ) (   ";
+    gotoxy(52, 20);
+    cout << "| |     | |   | | |             | |   | | |   | |  | |   ";
+    gotoxy(52, 21);
+    cout << "| |     | |   | | | ____        | |   | | |   | |  | |   ";
+    gotoxy(52, 22);
+    cout << "| |     | |   | | | ____        | |   | | |   | |  | |   ";
+    gotoxy(52, 23);
+    cout << "| |     | |   | | | \\_  )       | |   | | |   | |  | |   ";
+    gotoxy(52, 24);
+    cout << "| (____/| (___) | (___) |       | (___) | (___) |  | |   ";
+    gotoxy(52, 25);
+    cout << "(_______(_______(_______)       (_______(_______)  )_(   ";
+    cout << endl << endl;
+}
 
 class User {
 protected:
@@ -18,6 +112,7 @@ public:
     bool login(const string& user, const string& pass) {
         return username == user && password == pass;
     }
+
     virtual void showMenu() = 0;
 };
 
@@ -50,9 +145,27 @@ public:
     static bool isValidCNIC(const string& cnic) {
         return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
     }
-
     static bool isValidPostalCode(const string& code) {
-        return code.length() == 5 && all_of(code.begin(), code.end(), ::isdigit);
+        if (code.length() != 5) {
+            return false;
+        }
+        for (int i = 0; i < code.length(); i++) {
+            if (code[i] < '0' || code[i] > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void inputRegionInfo() {
+        do {
+            cout << "Enter 11-digit CNIC: ";
+            cin >> cnic;
+        } while (!isValidCNIC(cnic));
+        do {
+            cout << "Enter 5-digit Postal Code: ";
+            cin >> postalCode;
+        } while (!isValidPostalCode(postalCode));
     }
 
 };
@@ -70,12 +183,15 @@ public:
     void displayInfo() const {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
-
-    string getName() const { return name; }
-
-    string getParty() const { return party; }
-
-    int getVotes() const { return votes; }
+    string getName() const { 
+        return name; 
+    }
+    string getParty() const { 
+        return party; 
+    }
+    int getVotes() const {
+        return votes;
+    }
 };
 
 class Election {
