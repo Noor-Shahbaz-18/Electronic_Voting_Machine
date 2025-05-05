@@ -54,7 +54,7 @@ void frontpage()
     gotoxy(46, 23);
     cout << "| (____/\\                 \\   /  | (___) |   | |   ___) (___| )  \\  || (___) |\n";
     gotoxy(46, 24);
-    cout << "(_______/                  \\_/   (_______)   )_(   \\_______/|/    )_)(_______)\n";   
+    cout << "(_______/                  \\_/   (_______)   )_(   \\_______/|/    )_)(_______)\n";
 }
 
 // Function to display login page
@@ -125,7 +125,8 @@ class Voter : public User {
 public:
     Voter() : User("", ""), voterId(0) {}
     Voter(string u, string p, int id, string cnic, string postal)
-        : User(u, p), voterId(id), cnic(cnic), postalCode(postal) {}
+        : User(u, p), voterId(id), cnic(cnic), postalCode(postal) {
+    }
 
     void showMenu() {
         cout << "Welcome Voter: " << username << endl;
@@ -184,11 +185,11 @@ public:
     void displayInfo() const {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
-    string getName() const { 
-        return name; 
+    string getName() const {
+        return name;
     }
-    string getParty() const { 
-        return party; 
+    string getParty() const {
+        return party;
     }
     int getVotes() const {
         return votes;
@@ -240,7 +241,7 @@ public:
 
 
     void displayCandidates() {
-        ifstream file("candidate.txt");
+        ifstream file("candidates.txt");
         string line;
         cout << "\n--- Candidate List ---\n";
         while (getline(file, line)) {
@@ -627,15 +628,17 @@ int main() {
     cout << "Are you:\n";
     cout << "1. Admin\n";
     cout << "2. Voter\n";
+    cout << "3. Exit\n";
     cout << "Enter your choice: ";
     cin >> userChoice;
     cin.ignore(); // to clear input buffer
-
-    if (userChoice == 1) {
+    switch (userChoice) {
+    case 1:
         // Admin section
         admin.adminMenu(nationalElection); // Admin will manage NationalElection (you can change if needed)
-    }
-    else if (userChoice == 2) {
+        break;
+
+    case 2: {
         // Voter section
         int electionChoice;
         cout << "\nWhich Election you want to participate in?\n";
@@ -645,7 +648,8 @@ int main() {
         cin >> electionChoice;
         cin.ignore(); // to clear input buffer
 
-        if (electionChoice == 1) {
+        switch (electionChoice) {
+        case 1: {
             nationalElection.displayCandidates();
             string cnic, postalCode;
             int candidateIndex;
@@ -658,15 +662,23 @@ int main() {
             cin.ignore();
 
             nationalElection.secureVote(cnic, postalCode, candidateIndex - 1);
+            break;
         }
-        else if (electionChoice == 2) {
+        case 2:
             provincialElection.castProvincialVote();
-        }
-        else {
+            break;
+
+        default:
             cout << "Invalid election choice.\n";
         }
+        break;
     }
-    else {
+
+    case 3:
+        cout << "Exiting program.\n";
+        break;
+
+    default:
         cout << "Invalid choice. Exiting program.\n";
     }
 
