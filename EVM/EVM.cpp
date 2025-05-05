@@ -103,7 +103,6 @@ void logout()
     cout << "(_______(_______(_______)       (_______(_______)  )_(   ";
     cout << endl << endl;
 }
-
 class User {
 protected:
     string username;
@@ -114,7 +113,7 @@ public:
         return username == user && password == pass;
     }
 
-    virtual void showMenu() = 0;
+    virtual void showMenu() = 0; // pure virtual function
 };
 
 class Voter : public User {
@@ -145,7 +144,7 @@ public:
     void setHasVoted(bool voted) { hasVoted = voted; }
 
     static bool isValidCNIC(const string& cnic) {
-        return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit);
+        return cnic.length() == 11 && all_of(cnic.begin(), cnic.end(), ::isdigit); // all of function is used to get all cnic and dashes as entered
     }
     static bool isValidPostalCode(const string& code) {
         if (code.length() != 5) {
@@ -179,11 +178,11 @@ class Candidate {
 public:
     Candidate() : votes(0) {}
     Candidate(string n, string p) : name(n), party(p), votes(0) {}
-
-    void incrementVotes() { votes++; }
-
+    void incrementVotes() { 
+        votes++;
+    }
     void displayInfo() const {
-        cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
+        cout << "Name: " << name << "\n Party: " << party << "\n Votes: " << votes << endl;
     }
     string getName() const {
         return name;
