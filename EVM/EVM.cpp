@@ -766,6 +766,7 @@ public:
 
     bool loginAdmin() {
         string username, password;
+        cout << "\n\n\n";
         cout << "Enter username: ";
         getline(cin, username);
         cout << "Enter password: ";
@@ -789,6 +790,8 @@ public:
     }
 
     void addVoter(const string& filename) {
+        pause();
+        clearScreen();
         ofstream file(filename, ios::app);
         if (!file) {
             cout << "Error opening file: " << filename << endl;
@@ -881,6 +884,8 @@ public:
     }
 
     void addCandidateToElection(Election& election) {
+        pause();
+        clearScreen();
         string name, party;
         cout << "Enter Candidate Name: ";
         getline(cin, name);
@@ -916,10 +921,14 @@ public:
                 pause();
                 break;
             case 2:
-                isLoggedIn = loginAdmin();
-                pause();
-                clearScreen();
-                login();
+
+
+                if (isLoggedIn = loginAdmin())
+                {
+                    pause();
+                    clearScreen();
+                    login();
+                }
                 pause();
                 clearScreen();
                 break;
@@ -936,10 +945,13 @@ public:
                 break;
             case 4:
                 if (isLoggedIn) {
+                    pause();
+                    clearScreen();
                     cout << "Add candidate to:\n";
                     cout << "1. National Election\n";
                     cout << "2. Provincial Election\n";
                     int electionChoice;
+                    cout << "Enter choice:";
                     cin >> electionChoice;
                     cin.ignore();
                     if (electionChoice == 1) {
@@ -958,10 +970,13 @@ public:
                 pause();
                 break;
             case 5:
+                pause();
+                clearScreen();
                 cout << "Display candidates for:\n";
                 cout << "1. National Election\n";
                 cout << "2. Provincial Election\n";
                 int displayChoice;
+                cout << "Enter choice:";
                 cin >> displayChoice;
                 cin.ignore();
                 if (displayChoice == 1) {
@@ -976,10 +991,13 @@ public:
                 pause();
                 break;
             case 6:
+                pause();
+                clearScreen();
                 cout << "Show results for:\n";
                 cout << "1. National Election\n";
                 cout << "2. Provincial Election\n";
                 int resultChoice;
+                cout << "Enter choice:";
                 cin >> resultChoice;
                 cin.ignore();
                 if (resultChoice == 1) {
