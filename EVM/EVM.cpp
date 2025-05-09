@@ -136,13 +136,27 @@ public:
         cout << "2. Cast Vote" << endl;
     }
 
-    int getId() const { return voterId; }
-    string getPostalCode() const { return postalCode; }
-    string getCNIC() const { return cnic; }
-    string getProvince() const { return province; }
-    string getRegion() const { return region; }
-    bool getHasVoted() const { return hasVoted; }
-    void setHasVoted(bool voted) { hasVoted = voted; }
+    int getId() const { 
+        return voterId;
+    }
+    string getPostalCode() const { 
+        return postalCode;
+    }
+    string getCNIC() const {
+        return cnic;
+    }
+    string getProvince() const {
+        return province;
+    }
+    string getRegion() const { 
+        return region; 
+    }
+    bool getHasVoted() const { 
+        return hasVoted; 
+    }
+    void setHasVoted(bool voted) {
+        hasVoted = voted; 
+    }
 
     static bool isValidCNIC(const string& cnic) {
         string cleanedCNIC;
@@ -227,9 +241,15 @@ public:
     void displayInfo() const {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
-    string getName() const { return name; }
-    string getParty() const { return party; }
-    int getVotes() const { return votes; }
+    string getName() const { 
+        return name;
+    }
+    string getParty() const { 
+        return party;
+    }
+    int getVotes() const {
+        return votes; 
+    }
 };
 
 class Election {
