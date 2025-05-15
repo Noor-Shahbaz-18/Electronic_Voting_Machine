@@ -160,16 +160,19 @@ public:
 
     static bool isValidCNIC(const string& cnic) {
         string cleanedCNIC;
-        for (size_t i = 0; i < cnic.length(); i++) {
-            if (isdigit(cnic[i])) cleanedCNIC += cnic[i];
+        for (size_t i = 0; i < cnic.length(); i++) {    // size_t is used for unsigned integer data type
+            if (isdigit(cnic[i]))         // validation for only numeric characters to be enter as cnic
+                cleanedCNIC += cnic[i];
         }
         return cleanedCNIC.length() == 13;
     }
 
     static bool isValidPostalCode(const string& code) {
-        if (code.length() != 5) return false;
+        if (code.length() != 5) 
+            return false;
         for (size_t i = 0; i < code.length(); i++) {
-            if (code[i] < '0' || code[i] > '9') return false;
+            if (code[i] < '0' || code[i] > '9')
+                return false;
         }
         return true;
     }
@@ -237,7 +240,9 @@ public:
     Candidate() : votes(0) {}
     Candidate(string n, string p) : name(n), party(p), votes(0) {}
 
-    void incrementVotes() { votes++; }
+    void incrementVotes() { 
+        votes++; 
+    }
     void displayInfo() const {
         cout << "Name: " << name << ", Party: " << party << ", Votes: " << votes << endl;
     }
