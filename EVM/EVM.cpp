@@ -334,13 +334,6 @@ public:
             }
         }
         cout << "Voter not found: CNIC = " << cnic << ", Postal = " << postalCode << "\n";
-        cout << "Registered voters:\n";
-        for (int i = 0; i < voterCount; ++i) {
-            cout << "- CNIC = " << voters[i].getCNIC()
-                << ", Postal = " << voters[i].getPostalCode()
-                << ", Province = " << voters[i].getProvince()
-                << ", Region = " << voters[i].getRegion() << "\n";
-        }
         return false;
     }
 
@@ -727,6 +720,33 @@ private:
         return cleanedCNIC.length() == 13;
     }
 
+    bool isCNICUnique(const string& cnic) {
+        ifstream file("voters.txt");
+        string line;
+
+        string cleanedCNIC;
+        for (size_t i = 0; i < cnic.length(); i++) {
+            if (isdigit(cnic[i])) cleanedCNIC += cnic[i];
+        }
+
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string name, storedCNIC, temp;
+            int storedId;
+            getline(ss, name, ',');
+            ss >> storedId;
+            getline(ss, temp, ','); 
+            getline(ss, storedCNIC, ',');
+            if (cleanedCNIC == storedCNIC) {
+                file.close();
+                return false; 
+            }
+        }
+
+        file.close();
+        return true; 
+    }
+
     bool isValidPostalCode(const string& postalCode) {
         if (postalCode.length() != 5) return false;
         for (size_t i = 0; i < postalCode.length(); i++) {
@@ -786,6 +806,7 @@ public:
 
     bool loginAdmin() {
         string username, password;
+        cout << "\n\n\n";
         cout << "Enter username: ";
         getline(cin, username);
         cout << "Enter password: ";
@@ -809,6 +830,8 @@ public:
     }
 
     void addVoter(const string& filename) {
+        pause();
+        clearScreen();
         ofstream file(filename, ios::app);
         if (!file) {
             cout << "Error opening file: " << filename << endl;
@@ -834,18 +857,26 @@ public:
         }
         cin.ignore();
 
-        while (true) {
-            cout << "Enter CNIC (with or without dashes): ";
+        while (true) 
+        {
+            cout << "Enter CNIC (without dashes): ";
             getline(cin, cnic);
-            string cleanedCNIC;
-            for (size_t i = 0; i < cnic.length(); i++) {
-                if (isdigit(cnic[i])) cleanedCNIC += cnic[i];
+
+            if (isValidCNIC(cnic)) 
+            {  
+                if (isCNICUnique(cnic)) 
+                { 
+                    break;
+                }
+                else 
+                {
+                    cout << "This CNIC is already registered. Please enter a unique CNIC.\n";
+                }
             }
-            if (isValidCNIC(cleanedCNIC)) {
-                cnic = cleanedCNIC;
-                break;
+            else
+            {
+                cout << "Invalid CNIC. Must be exactly 13 digits.\n";
             }
-            cout << "Invalid CNIC. Must be 13 digits.\n";
         }
 
         while (true) {
@@ -867,45 +898,60 @@ public:
         for (int i = 0; i < 4; i++) {
             cout << i + 1 << ". " << provinces[i] << endl;
         }
+
         int provinceChoice;
         cout << "Enter province number (1-4): ";
         cin >> provinceChoice;
         cin.ignore();
+
+        // Validate provinceChoice 
         if (provinceChoice < 1 || provinceChoice > 4) {
-            cout << "Invalid province selection. Defaulting to Punjab.\n";
-            province = provinces[0];
+            cout << "Invalid province selection. Defaulting to Punjab (1).\n";
+            provinceChoice = 1;  // Reset to Punjab (index 0)
         }
-        else {
-            province = provinces[provinceChoice - 1];
-        }
+
+        // Now provinceChoice is guaranteed to be 1-4
+        province = provinces[provinceChoice - 1];
 
         cout << "\nSelect Region in " << province << ":\n";
         for (int j = 0; j < 3; j++) {
             cout << j + 1 << ". " << regions[provinceChoice - 1][j] << endl;
         }
+
         int regionChoice;
         cout << "Enter region number (1-3): ";
         cin >> regionChoice;
         cin.ignore();
+
+        // Validate regionChoice (force it to be 1-3)
         if (regionChoice < 1 || regionChoice > 3) {
-            cout << "Invalid region selection. Defaulting to first region.\n";
-            region = regions[provinceChoice - 1][0];
-        }
-        else {
-            region = regions[provinceChoice - 1][regionChoice - 1];
+            cout << "Invalid region selection. Defaulting to first region (1).\n";
+            regionChoice = 1;  // Reset to first region (index 0)
         }
 
+        // Now regionChoice is guaranteed to be 1-3
+        region = regions[provinceChoice - 1][regionChoice - 1];
         file << name << "," << id << "," << cnic << "," << postalCode << "," << province << "," << region << endl;
         file.close();
         cout << "Voter added successfully.\n";
     }
 
     void addCandidateToElection(Election& election) {
+        pause();
+        clearScreen();
         string name, party;
-        cout << "Enter Candidate Name: ";
-        getline(cin, name);
-        cout << "Enter Party Name: ";
-        getline(cin, party);
+        while (true) {
+            cout << "Enter Candidate Name: ";
+            getline(cin, name);
+            if (isValidName(name)) break;
+            cout << "Invalid name.\n";
+        }
+        while (true) {
+            cout << "Enter Party Name: ";
+            getline(cin, party);
+            if (isValidName(name)) break;
+            cout << "Invalid party name.\n";
+        }
 
         election.addCandidate(name, party);
     }
@@ -936,10 +982,14 @@ public:
                 pause();
                 break;
             case 2:
-                isLoggedIn = loginAdmin();
-                pause();
-                clearScreen();
-                login();
+
+
+                if (isLoggedIn = loginAdmin())
+                {
+                    pause();
+                    clearScreen();
+                    login();
+                }
                 pause();
                 clearScreen();
                 break;
@@ -956,10 +1006,13 @@ public:
                 break;
             case 4:
                 if (isLoggedIn) {
+                    pause();
+                    clearScreen();
                     cout << "Add candidate to:\n";
                     cout << "1. National Election\n";
                     cout << "2. Provincial Election\n";
                     int electionChoice;
+                    cout << "Enter choice:";
                     cin >> electionChoice;
                     cin.ignore();
                     if (electionChoice == 1) {
@@ -978,10 +1031,13 @@ public:
                 pause();
                 break;
             case 5:
+                pause();
+                clearScreen();
                 cout << "Display candidates for:\n";
                 cout << "1. National Election\n";
                 cout << "2. Provincial Election\n";
                 int displayChoice;
+                cout << "Enter choice:";
                 cin >> displayChoice;
                 cin.ignore();
                 if (displayChoice == 1) {
@@ -996,10 +1052,13 @@ public:
                 pause();
                 break;
             case 6:
+                pause();
+                clearScreen();
                 cout << "Show results for:\n";
                 cout << "1. National Election\n";
                 cout << "2. Provincial Election\n";
                 int resultChoice;
+                cout << "Enter choice:";
                 cin >> resultChoice;
                 cin.ignore();
                 if (resultChoice == 1) {
